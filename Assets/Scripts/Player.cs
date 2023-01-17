@@ -1,25 +1,58 @@
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float rotateSpeed = 1f;
-    [SerializeField] private float velocity = 5f;
+    [Header("FX, SFX")]
+    [SerializeField] ParticleSystem fxExplotion;
+    [SerializeField] AudioClip sfxExplotion;
 
-    private Rigidbody rb;
+    [SerializeField] PlayableDirector masterTimeline;
+    [SerializeField] float timeForReloadLevel = 3f;
+
+
+    AudioSource audioSource;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 
-    private void FixedUpdate()
+    public void StartPlayerCrashSequence()
     {
-        float xValue = Input.GetAxis("Vertical");
-        float yValue = Input.GetAxis("Horizontal");
-        Vector3 vec = new Vector3(xValue, yValue, 0);
+        StopMovement();
+        StopTimeline();
+        PlayCrashEffect();
+        HidePlayerShip();
+        Invoke("ReloadLevel", 3f);
+    }
 
-        transform.Rotate(vec, rotateSpeed, Space.World);
-        //transform.TransformDirection(vec.normalized * velocity * Time.fixedDeltaTime);
-        transform.position = transform.position + transform.forward * velocity * Time.fixedDeltaTime;
+    private void HidePlayerShip()
+    {
+        transform.Find("default").GetComponent<MeshRenderer>().enabled = false;
+    }
+
+    private void StopTimeline()
+    {
+        masterTimeline.Stop();
+    }
+
+    private void ReloadLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
+    }
+
+    private void PlayCrashEffect()
+    {
+        fxExplotion.Play();
+        audioSource.volume = 0.1f;
+        audioSource.PlayOneShot(sfxExplotion);
+    }
+
+    void StopMovement()
+    {
+        gameObject.GetComponent<PlayerControls>().enabled = false;
     }
 }

@@ -1,24 +1,39 @@
 using System;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class PlayerControls : MonoBehaviour
 {
-    [SerializeField] private float clampedPosX;
+    [Header("General Setup Settings")]
+
+    [Header("비행기 화면 위치 조정")]
+    [Tooltip("좌우 폭 고정")][SerializeField] private float clampedPosX;
     [SerializeField] private float clampedPosy;
     [SerializeField] private float xRange = 7f;
     [SerializeField] private float yRange = 4.5f;
-    [SerializeField] private float controlSpeed = 10f;
     [SerializeField] float positionPitchFator = 15f;
     [SerializeField] float controlPitchFactor = 15f;
     [SerializeField] float positionYawFator = 15f;
     [SerializeField] float controlYawFactor = 15f;
     [SerializeField] float positionRollFator = 15f;
     [SerializeField] float controlRollFactor = 15f;
-    [SerializeField] ParticleSystem fxLaserRight;
-    [SerializeField] ParticleSystem fxLaserLeft;
+
+    [Header("비행기 조정")]
+    [Tooltip("비행기 상하좌우 움직임 속도 조정")][SerializeField] private float controlSpeed = 10f;
+
+    [Header("오브젝트 삽입")]
+    [SerializeField] GameObject[] lasers;
+    [SerializeField] AudioClip sfxLaser;
+
+    AudioSource audioSource;
 
     float inputX;
     float inputY;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void Update()
     {
@@ -29,19 +44,39 @@ public class PlayerControls : MonoBehaviour
 
     private void ProcessFiring()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKey(KeyCode.Space))
         {
-            Debug.Log("firing!");
-            if (!fxLaserLeft.isPlaying && !fxLaserRight.isPlaying)
+            SetLasersActive(true);
+        }
+        else
+        {
+            SetLasersActive(false);
+        }
+    }
+
+    private void SetLasersActive(bool isActive)
+    {
+        PlayerSoundLaser(isActive);
+
+        foreach (GameObject laser in lasers)
+        {
+            var emissionModule = laser.GetComponent<ParticleSystem>().emission;
+            emissionModule.enabled = isActive;
+        }
+    }
+
+    private void PlayerSoundLaser(bool isActive)
+    {
+        if(isActive)
+        {
+            if (!audioSource.isPlaying)
             {
-                fxLaserRight.Play();
-                fxLaserLeft.Play();
+                audioSource.PlayOneShot(sfxLaser);
             }
         }
         else
         {
-            fxLaserRight.Stop();
-            fxLaserLeft.Stop();
+            audioSource.Stop();
         }
     }
 
