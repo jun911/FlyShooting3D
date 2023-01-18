@@ -231,7 +231,9 @@ MonoBehaviour:
   health: 100
   hitPerHealth: -25
   timeToDestruct: 4
-  score: 100
+  scorePerDestory: 100
+  scorePerHit: 15
   fxExplotion: {fileID: 191186, guid: 6d521e0b56203fc4d8d271341712a841, type: 3}
+  fxHit: {fileID: 194062, guid: 93fdb306f5b9cff41b86280ad8b3f6ca, type: 3}
   sfxExplotion: {fileID: 8300000, guid: 9b545d4443b84704095c56e33fd60db1, type: 3}
   parent: {fileID: 0}

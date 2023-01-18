@@ -5,22 +5,24 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     [Header("FX, SFX")]
-    [SerializeField] ParticleSystem fxExplotion;
-    [SerializeField] AudioClip sfxExplotion;
+    [SerializeField] private GameObject fxExplotion;
+    [SerializeField] private PlayableDirector masterTimeline;
+    [SerializeField] private float timeForReloadLevel = 3f;
 
-    [SerializeField] PlayableDirector masterTimeline;
-    [SerializeField] float timeForReloadLevel = 3f;
-
-
-    AudioSource audioSource;
+    private AudioSource audioSource;
+    private Life life;
+    GameObject parentGameObject;
 
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        life = FindObjectOfType<Life>();
+        parentGameObject = GameObject.FindWithTag("SpawnAtRuntime");
     }
 
     public void StartPlayerCrashSequence()
     {
+        life.LoseLife();
         StopMovement();
         StopTimeline();
         PlayCrashEffect();
@@ -31,6 +33,10 @@ public class Player : MonoBehaviour
     private void HidePlayerShip()
     {
         transform.Find("default").GetComponent<MeshRenderer>().enabled = false;
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     private void StopTimeline()
@@ -46,12 +52,11 @@ public class Player : MonoBehaviour
 
     private void PlayCrashEffect()
     {
-        fxExplotion.Play();
-        audioSource.volume = 0.1f;
-        audioSource.PlayOneShot(sfxExplotion);
+        GameObject fx = Instantiate(fxExplotion, transform.position, Quaternion.identity);
+        fx.transform.parent = parentGameObject.transform;
     }
 
-    void StopMovement()
+    private void StopMovement()
     {
         gameObject.GetComponent<PlayerControls>().enabled = false;
     }

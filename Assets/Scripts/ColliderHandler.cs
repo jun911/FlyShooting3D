@@ -6,7 +6,7 @@ public class ColliderHandler : MonoBehaviour
 
     private void Start()
     {
-        player = this.gameObject.GetComponent<Player>();
+        player = FindObjectOfType<Player>();
     }
 
     private void OnCollisionEnter(Collision collision)

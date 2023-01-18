@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - SpawnAtRuntime
+  - ScoreBoardText
+  - Life
   layers:
   - Default
   - TransparentFX

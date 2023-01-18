@@ -1,12 +1,33 @@
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
-    public ScoreBoard scoreBoard;
+    private static GameManager instance = null;
+
+    public static GameManager Instance
+    {
+        get{
+            if(instance == null)
+            {
+                return null;
+            }
+            return instance;
+        }
+    }
 
     private void Awake()
     {
         instance = this;
+
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
     }
 }
