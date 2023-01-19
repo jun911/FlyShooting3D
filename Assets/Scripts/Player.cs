@@ -26,13 +26,12 @@ public class Player : MonoBehaviour
         StopMovement();
         StopTimeline();
         PlayCrashEffect();
-        HidePlayerShip();
+        DestroyPlayerShip();
         Invoke("ReloadLevel", 3f);
     }
 
-    private void HidePlayerShip()
+    private void DestroyPlayerShip()
     {
-        transform.Find("default").GetComponent<MeshRenderer>().enabled = false;
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
